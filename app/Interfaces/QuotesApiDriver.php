@@ -9,4 +9,6 @@ interface QuotesApiDriver
     public function setCount(int $count): KayneDriver;
 
     public function getQuotes(): array;
+
+    public function clearCache(): KayneDriver;
 }

@@ -35,9 +35,11 @@ class KayneDriver implements QuotesApiDriver
         });
     }
 
-    public function clearCache(): void
+    public function clearCache(): KayneDriver
     {
-        Cache::forget('quotes');
+        $cacheKey = 'quotes_' . $this->count;
+        Cache::forget($cacheKey);
+        return $this;
     }
 
     private function _getQuote(): string
