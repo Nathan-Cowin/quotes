@@ -5,5 +5,7 @@ use Carbon\CarbonInterface;
 
 interface QuotesApiDriver
 {
-    public function test(string $test): string;
+    public function setCount(int $count): void;
+
+    public function getMultipleQuotes(int $count): string;
 }

@@ -18,8 +18,13 @@ class QuotesManager extends Manager implements QuotesApiDriver
         //TODO return $this->config->get('kayne.driver');
     }
 
-    public function test($test): string
+    public function getMultipleQuotes($test): string
     {
-        return $this->driver()->test($test);
+        return $this->driver()->getMultipleQuotes($test);
+    }
+
+    public function setCount($count): void
+    {
+        $this->driver()->setCount($count);
     }
 }
