@@ -34,5 +34,9 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-
+    'quotes' => [
+        'kanye' => [
+            'endpoint_text' => 'https://api.kanye.rest/text',
+        ],
+    ]
 ];
