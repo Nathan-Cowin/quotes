@@ -18,6 +18,9 @@ use postman or curl
 set header
     key:Authorisation value:api_token
 
+Please ignore for code quality but created a quick front end
+http://127.0.0.1:8000/quotes/
+
 ## endpoints
 api/kayne/quotes/5/
 api/kayne/quotes/5/refresh

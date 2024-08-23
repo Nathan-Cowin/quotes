@@ -98,7 +98,7 @@ class QuoteTest extends TestCase
                     ]
                 ]
             ],
-            'kayne quotes with refresh' => [
+            'kayne quotes with refresh, confirm cache is cleared' => [
                 'api/kayne/quotes/3/refresh',
                 'kayne_quote.json',
                 [
