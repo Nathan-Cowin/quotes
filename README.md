@@ -21,7 +21,7 @@ set header
 Please ignore for code quality but created a quick front end
 http://127.0.0.1:8000/quotes/
 
-## endpoints
+## Endpoints
 api/kayne/quotes/5/
 api/kayne/quotes/5/refresh
 
