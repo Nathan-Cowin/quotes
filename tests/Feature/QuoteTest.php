@@ -16,97 +16,57 @@ class QuoteTest extends TestCase
         $user = $this->createAuthenticatedUser();
 
         $this->mockKanyeRestApiResponse($file);
-        $response = $this->getJson($endpoint, [
-            'Authorisation' => $user->generateToken(),
-        ]);
-
-        $response
-            ->assertStatus(Response::HTTP_OK)
-            ->assertExactJson(
-                $expected
-            );
+        $this->assertQuotesResponse($endpoint, $user->generateToken(), $expected);
     }
 
-    public function test_quotes_caching()
+    public function test_quotes_are_being_cached()
     {
         $user = $this->createAuthenticatedUser();
+        $token = $user->generateToken();
         $this->mockMultipleKanyeRestApiResponses();
 
-        $response = $this->getJson('api/kayne/quotes/2', [
-            'Authorisation' => $user->generateToken(),
-        ]);
-        $response
-            ->assertStatus(Response::HTTP_OK)
-            ->assertExactJson(
-                [
-                    'status' => 200,
-                    'data' => [
-                        'quotes' => [
-                            "People say it's enough and I got my point across ... the point isn't across until we cross the point\n",
-                            "I'm giving all Good music artists back the 50% share I have of their masters\n"
-                        ]
-                    ]
+        $expectedJson = [
+            'status' => 200,
+            'data' => [
+                'quotes' => [
+                    "People say it's enough and I got my point across ... the point isn't across until we cross the point\n",
+                    "I'm giving all Good music artists back the 50% share I have of their masters\n"
                 ]
-            );
+            ]
+        ];
 
-        $response = $this->getJson('api/kayne/quotes/2', [
-            'Authorisation' => $user->generateToken(),
-        ]);
-
-        $response
-            ->assertStatus(Response::HTTP_OK)
-            ->assertExactJson(
-                [
-                    'status' => 200,
-                    'data' => [
-                        'quotes' => [
-                            "People say it's enough and I got my point across ... the point isn't across until we cross the point\n",
-                            "I'm giving all Good music artists back the 50% share I have of their masters\n"
-                        ]
-                    ]
-                ]
-            );
+        $this->assertQuotesResponse('api/kayne/quotes/2', $token, $expectedJson);
+        $this->assertQuotesResponse('api/kayne/quotes/2', $token, $expectedJson);
     }
 
-    public function test_quotes_clear_cache()
+    public function test_refresh_clears_cache()
     {
         $user = $this->createAuthenticatedUser();
+        $token = $user->generateToken();
         $this->mockMultipleKanyeRestApiResponses();
 
-        $response = $this->getJson('api/kayne/quotes/2', [
-            'Authorisation' => $user->generateToken(),
-        ]);
-        $response
-            ->assertStatus(Response::HTTP_OK)
-            ->assertExactJson(
-                [
-                    'status' => 200,
-                    'data' => [
-                        'quotes' => [
-                            "People say it's enough and I got my point across ... the point isn't across until we cross the point\n",
-                            "I'm giving all Good music artists back the 50% share I have of their masters\n"
-                        ]
-                    ]
+        $initialExpectedJson = [
+            'status' => 200,
+            'data' => [
+                'quotes' => [
+                    "People say it's enough and I got my point across ... the point isn't across until we cross the point\n",
+                    "I'm giving all Good music artists back the 50% share I have of their masters\n"
                 ]
-            );
+            ]
+        ];
 
-        $response = $this->getJson('api/kayne/quotes/2/refresh', [
-            'Authorisation' => $user->generateToken(),
-        ]);
-
-        $response
-            ->assertStatus(Response::HTTP_OK)
-            ->assertExactJson(
-                [
-                    'status' => 200,
-                    'data' => [
-                        'quotes' => [
-                            "I'm giving all Good music artists back the 50% share I have of their masters\n",
-                            "People say it's enough and I got my point across ... the point isn't across until we cross the point\n"
-                        ]
-                    ]
+        $refreshedExpectedJson = [
+            'status' => 200,
+            'data' => [
+                'quotes' => [
+                    "I'm giving all Good music artists back the 50% share I have of their masters\n",
+                    "People say it's enough and I got my point across ... the point isn't across until we cross the point\n"
                 ]
-            );
+            ]
+        ];
+
+        $this->assertQuotesResponse('api/kayne/quotes/2', $token, $initialExpectedJson);
+        $this->assertQuotesResponse('api/kayne/quotes/2/refresh', $token, $refreshedExpectedJson);
     }
 
     public function test_quotes_returns_with_non_authenticated_user()
@@ -143,6 +103,17 @@ class QuoteTest extends TestCase
     private function getFixtureFileContent(string $filename): string
     {
         return file_get_contents('tests/Fixtures/' . $filename);
+    }
+
+    private function assertQuotesResponse(string $endpoint, string $token, array $expectedJson): void
+    {
+        $response = $this->getJson($endpoint, [
+            'Authorisation' => $token,
+        ]);
+
+        $response
+            ->assertStatus(Response::HTTP_OK)
+            ->assertExactJson($expectedJson);
     }
 
     private function createAuthenticatedUser(): User
@@ -194,7 +165,7 @@ class QuoteTest extends TestCase
                     ]
                 ]
             ],
-            'test cache is cleared' => [
+            'kayne quotes with with refresh to clear cache' => [
                 'api/kayne/quotes/3/refresh',
                 'kayne_quote.json',
                 [
