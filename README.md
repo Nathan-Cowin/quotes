@@ -19,7 +19,7 @@ set header
     key:Authorisation value:api_token
 
 Please ignore for code quality but created a quick front end
-http://127.0.0.1:8000/quotes/
+http://127.0.0.1:8000/quotes/ as well
 
 ## Endpoints
 api/kayne/quotes/5/
