@@ -30,16 +30,7 @@ class QuoteTest extends TestCase
     public function test_quotes_caching()
     {
         $user = $this->createAuthenticatedUser();
-
-        $responseBody = $this->getFixtureFileContent('kayne_quote.json');
-        $responseBodySecondary = $this->getFixtureFileContent('kayne_quote_2.json');
-        HTTP::fake([
-            'https://api.kanye.rest/*' => Http::sequence()
-                ->push($responseBody, 200)
-                ->push($responseBodySecondary, 200)
-                ->push($responseBodySecondary, 200)
-                ->push($responseBody, 200)
-        ]);
+        $this->mockMultipleKanyeRestApiResponses();
 
         $response = $this->getJson('api/kayne/quotes/2', [
             'Authorisation' => $user->generateToken(),
@@ -80,16 +71,7 @@ class QuoteTest extends TestCase
     public function test_quotes_clear_cache()
     {
         $user = $this->createAuthenticatedUser();
-
-        $responseBody = $this->getFixtureFileContent('kayne_quote.json');
-        $responseBodySecondary = $this->getFixtureFileContent('kayne_quote_2.json');
-        HTTP::fake([
-            'https://api.kanye.rest/*' => Http::sequence()
-                ->push($responseBody, 200)
-                ->push($responseBodySecondary, 200)
-                ->push($responseBodySecondary, 200)
-                ->push($responseBody, 200)
-        ]);
+        $this->mockMultipleKanyeRestApiResponses();
 
         $response = $this->getJson('api/kayne/quotes/2', [
             'Authorisation' => $user->generateToken(),
@@ -141,6 +123,20 @@ class QuoteTest extends TestCase
         $responseBody = $this->getFixtureFileContent($fixtureFile);
         HTTP::fake([
             'https://api.kanye.rest/*' => Http::response($responseBody, 200),
+        ]);
+    }
+
+    private function mockMultipleKanyeRestApiResponses()
+    {
+        $responseBody = $this->getFixtureFileContent('kayne_quote.json');
+        $responseBodySecondary = $this->getFixtureFileContent('kayne_quote_2.json');
+
+        HTTP::fake([
+            'https://api.kanye.rest/*' => Http::sequence()
+                ->push($responseBody, 200)
+                ->push($responseBodySecondary, 200)
+                ->push($responseBodySecondary, 200)
+                ->push($responseBody, 200)
         ]);
     }
 
