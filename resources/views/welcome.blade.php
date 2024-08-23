@@ -29,7 +29,7 @@
             <form action="/quotes/refresh" method="post">
                 @csrf
                 <input type="number" id="count" name="count" style="  border: 2px solid blue; border-radius: 4px;" required>
-                <input type="submit" value="refresh" style="background: blue; color: white">
+                <input type="submit" value="refresh" style="background: blue; color: white; padding: 2px 8px">
             </form>
         </div>
     </body>

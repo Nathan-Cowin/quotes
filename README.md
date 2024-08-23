@@ -5,22 +5,18 @@
 Composer install
 cp env.example .env
 php artisan migrate
+php artisan key:generate
 php artisan serve
 
-sorry you need to generate token ..
-new terminal
-php artisan tinker
-User::factory()->create()
-grab the api_token
-
-
+get LOCAL_API_TOKEN from env.example
 use postman or curl
 set header
-    key:Authorisation value:api_token
+    key:Authorisation value:LOCAL_API_TOKEN
 
-Please ignore for code quality but created a quick front end
+Or (please ignore for code quality) but created a quick front end
 you need to open a new terminal and run: php artisan serve --port 3001
-http://127.0.0.1:8000/quotes/ as well
+
+http://127.0.0.1:8000/quotes/ 
 
 ## Endpoints
 api/kayne/quotes/5/
