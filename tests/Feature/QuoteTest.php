@@ -5,12 +5,13 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class QuoteTest extends TestCase
 {
     #[DataProvider('provideEndpoints')]
-    public function testQuotesReturnWithAuthenticatedUser(string $endpoint, string $file, array $expected)
+    public function test_quotes_returns_with_authenticated_user(string $endpoint, string $file, array $expected)
     {
         $user = $this->createAuthenticatedUser();
 
@@ -19,9 +20,20 @@ class QuoteTest extends TestCase
             'Authorisation' => $user->generateToken(),
         ]);
 
-        $response->assertExactJson(
+        $response
+            ->assertStatus(Response::HTTP_OK)
+            ->assertExactJson(
             $expected
         );
+    }
+
+    public function test_quotes_returns_with_non_authenticated_user()
+    {
+        $response = $this->getJson('api/kayne/quotes/1', [
+            'Authorisation' => '',
+        ]);
+
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
     private function mockKanyeRestApiResponse(string $fixtureFile): void
@@ -49,7 +61,7 @@ class QuoteTest extends TestCase
                 'api/kayne/quotes/1',
                 'kayne_quote.json',
                 [
-                    'success' => 200,
+                    'status' => 200,
                     'data' => [
                         'quotes' => [
                             "People say it's enough and I got my point across ... the point isn't across until we cross the point\n"
@@ -61,7 +73,7 @@ class QuoteTest extends TestCase
                 'api/kayne/quotes/2',
                 'kayne_quote.json',
                 [
-                    'success' => 200,
+                    'status' => 200,
                     'data' => [
                         'quotes' => [
                             "People say it's enough and I got my point across ... the point isn't across until we cross the point\n",
@@ -74,7 +86,7 @@ class QuoteTest extends TestCase
                 'api/kayne/quotes',
                 'kayne_quote.json',
                 [
-                    'success' => 200,
+                    'status' => 200,
                     'data' => [
                         'quotes' => [
                             "People say it's enough and I got my point across ... the point isn't across until we cross the point\n",
@@ -90,7 +102,7 @@ class QuoteTest extends TestCase
                 'api/kayne/quotes/3/refresh',
                 'kayne_quote.json',
                 [
-                    'success' => 200,
+                    'status' => 200,
                     'data' => [
                         'quotes' => [
                             "People say it's enough and I got my point across ... the point isn't across until we cross the point\n",
