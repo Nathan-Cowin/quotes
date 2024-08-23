@@ -19,13 +19,14 @@ set header
     key:Authorisation value:api_token
 
 Please ignore for code quality but created a quick front end
+you need to open a new terminal and run: php artisan serve --port 3001
 http://127.0.0.1:8000/quotes/ as well
 
 ## Endpoints
 api/kayne/quotes/5/
 api/kayne/refresh/5/
 
-you can change 5 for number of quotes you want
+5 is an optional parameter which will default to 5
 
 ## Running local test suite
 php artisan test
