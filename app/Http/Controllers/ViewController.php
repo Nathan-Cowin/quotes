@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 
 class ViewController extends Controller
 {
-    private const API_BASE_URL = 'http://127.0.0.1:3001/api/kayne/quotes/';
+    private const API_BASE_URL = 'http://127.0.0.1:3001/api/kayne/';
     //This whole thing is a horrible hack please ignore, just wanted something on frontend
     public function index()
     {
@@ -34,7 +34,7 @@ class ViewController extends Controller
         $user = User::factory()->create();
         $token = $user->generateToken();
 
-        $endpoint = self::API_BASE_URL . $count . ($count ? '/refresh' : '');
+        $endpoint = self::API_BASE_URL . ($count ? 'refresh/' : 'quotes/') . $count;
         $response = Http::withHeader('Authorisation', $token)->timeout(5)->get($endpoint);
 
         return $this->extractQuotes($response);

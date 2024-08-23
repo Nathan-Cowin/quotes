@@ -66,10 +66,10 @@ class QuoteTest extends TestCase
         ];
 
         $this->assertQuotesResponse('api/kayne/quotes/2', $token, $initialExpectedJson);
-        $this->assertQuotesResponse('api/kayne/quotes/2/refresh', $token, $refreshedExpectedJson);
+        $this->assertQuotesResponse('api/kayne/refresh/2', $token, $refreshedExpectedJson);
     }
 
-    public function test_quotes_returns_with_non_authenticated_user()
+    public function test_quotes_with_non_authenticated_user()
     {
         $response = $this->getJson('api/kayne/quotes/1', [
             'Authorisation' => '',
@@ -165,13 +165,29 @@ class QuoteTest extends TestCase
                     ]
                 ]
             ],
-            'kayne quotes with with refresh to clear cache' => [
-                'api/kayne/quotes/3/refresh',
+            'kayne refresh with parameter' => [
+                'api/kayne/refresh/3',
                 'kayne_quote.json',
                 [
                     'status' => 200,
                     'data' => [
                         'quotes' => [
+                            "People say it's enough and I got my point across ... the point isn't across until we cross the point\n",
+                            "People say it's enough and I got my point across ... the point isn't across until we cross the point\n",
+                            "People say it's enough and I got my point across ... the point isn't across until we cross the point\n",
+                        ]
+                    ]
+                ]
+            ],
+            'kayne refresh with default parameter' => [
+                'api/kayne/refresh',
+                'kayne_quote.json',
+                [
+                    'status' => 200,
+                    'data' => [
+                        'quotes' => [
+                            "People say it's enough and I got my point across ... the point isn't across until we cross the point\n",
+                            "People say it's enough and I got my point across ... the point isn't across until we cross the point\n",
                             "People say it's enough and I got my point across ... the point isn't across until we cross the point\n",
                             "People say it's enough and I got my point across ... the point isn't across until we cross the point\n",
                             "People say it's enough and I got my point across ... the point isn't across until we cross the point\n",

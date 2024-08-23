@@ -23,7 +23,7 @@ http://127.0.0.1:8000/quotes/ as well
 
 ## Endpoints
 api/kayne/quotes/5/
-api/kayne/quotes/5/refresh
+api/kayne/refresh/5/
 
 you can change 5 for number of quotes you want
 
