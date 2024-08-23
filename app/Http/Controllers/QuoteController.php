@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Facades\Quote;
 use Illuminate\Http\JsonResponse;
+use App\Traits\ApiResponses;
 
 class QuoteController extends Controller
 {
+    use ApiResponses;
+
     public function getQuotesWithoutRefresh($name, $count = 5): JsonResponse
     {
         return $this->getQuotes($name, $count);
@@ -20,22 +23,16 @@ class QuoteController extends Controller
     private function getQuotes($name, $count = 5, $refresh = false): JsonResponse
     {
         $driverName = $this->_getDriver($name);
-
-        $quoteDriver = Quote::driver($driverName);
+        $quoteDriver = Quote::driver($driverName)->setCount($count);
 
         if ($refresh) {
             $quoteDriver->clearCache();
         }
 
         $quotes = $quoteDriver
-            ->setCount($count)
             ->getQuotes();
 
-        //todo extract the response
-        return response()->json([
-            'success' => true,
-            'data' => $quotes,
-        ]);
+        return $this->successResponse($quotes);
     }
 
     private function _getDriver($name)
