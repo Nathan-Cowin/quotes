@@ -86,7 +86,7 @@ class QuoteTest extends TestCase
         ]);
     }
 
-    private function mockMultipleKanyeRestApiResponses()
+    private function mockMultipleKanyeRestApiResponses(): void
     {
         $responseBody = $this->getFixtureFileContent('kayne_quote.json');
         $responseBodySecondary = $this->getFixtureFileContent('kayne_quote_2.json');
