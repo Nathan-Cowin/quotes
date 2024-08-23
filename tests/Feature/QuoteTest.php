@@ -23,8 +23,108 @@ class QuoteTest extends TestCase
         $response
             ->assertStatus(Response::HTTP_OK)
             ->assertExactJson(
-            $expected
-        );
+                $expected
+            );
+    }
+
+    public function test_quotes_caching()
+    {
+        $user = $this->createAuthenticatedUser();
+
+        $responseBody = $this->getFixtureFileContent('kayne_quote.json');
+        $responseBodySecondary = $this->getFixtureFileContent('kayne_quote_2.json');
+        HTTP::fake([
+            'https://api.kanye.rest/*' => Http::sequence()
+                ->push($responseBody, 200)
+                ->push($responseBodySecondary, 200)
+                ->push($responseBodySecondary, 200)
+                ->push($responseBody, 200)
+        ]);
+
+        $response = $this->getJson('api/kayne/quotes/2', [
+            'Authorisation' => $user->generateToken(),
+        ]);
+        $response
+            ->assertStatus(Response::HTTP_OK)
+            ->assertExactJson(
+                [
+                    'status' => 200,
+                    'data' => [
+                        'quotes' => [
+                            "People say it's enough and I got my point across ... the point isn't across until we cross the point\n",
+                            "I'm giving all Good music artists back the 50% share I have of their masters\n"
+                        ]
+                    ]
+                ]
+            );
+
+        $response = $this->getJson('api/kayne/quotes/2', [
+            'Authorisation' => $user->generateToken(),
+        ]);
+
+        $response
+            ->assertStatus(Response::HTTP_OK)
+            ->assertExactJson(
+                [
+                    'status' => 200,
+                    'data' => [
+                        'quotes' => [
+                            "People say it's enough and I got my point across ... the point isn't across until we cross the point\n",
+                            "I'm giving all Good music artists back the 50% share I have of their masters\n"
+                        ]
+                    ]
+                ]
+            );
+    }
+
+    public function test_quotes_clear_cache()
+    {
+        $user = $this->createAuthenticatedUser();
+
+        $responseBody = $this->getFixtureFileContent('kayne_quote.json');
+        $responseBodySecondary = $this->getFixtureFileContent('kayne_quote_2.json');
+        HTTP::fake([
+            'https://api.kanye.rest/*' => Http::sequence()
+                ->push($responseBody, 200)
+                ->push($responseBodySecondary, 200)
+                ->push($responseBodySecondary, 200)
+                ->push($responseBody, 200)
+        ]);
+
+        $response = $this->getJson('api/kayne/quotes/2', [
+            'Authorisation' => $user->generateToken(),
+        ]);
+        $response
+            ->assertStatus(Response::HTTP_OK)
+            ->assertExactJson(
+                [
+                    'status' => 200,
+                    'data' => [
+                        'quotes' => [
+                            "People say it's enough and I got my point across ... the point isn't across until we cross the point\n",
+                            "I'm giving all Good music artists back the 50% share I have of their masters\n"
+                        ]
+                    ]
+                ]
+            );
+
+        $response = $this->getJson('api/kayne/quotes/2/refresh', [
+            'Authorisation' => $user->generateToken(),
+        ]);
+
+        $response
+            ->assertStatus(Response::HTTP_OK)
+            ->assertExactJson(
+                [
+                    'status' => 200,
+                    'data' => [
+                        'quotes' => [
+                            "I'm giving all Good music artists back the 50% share I have of their masters\n",
+                            "People say it's enough and I got my point across ... the point isn't across until we cross the point\n"
+                        ]
+                    ]
+                ]
+            );
     }
 
     public function test_quotes_returns_with_non_authenticated_user()
@@ -98,7 +198,7 @@ class QuoteTest extends TestCase
                     ]
                 ]
             ],
-            'kayne quotes with refresh, confirm cache is cleared' => [
+            'test cache is cleared' => [
                 'api/kayne/quotes/3/refresh',
                 'kayne_quote.json',
                 [

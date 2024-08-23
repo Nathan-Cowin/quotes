@@ -15,11 +15,11 @@ class KayneDriver implements QuotesApiDriver
         $this->count = $count;
         return $this;
     }
+
     public function getQuotes(): array
     {
-        if(!isset($this->count)){
-            //todo throw exception and test this
-            return 'set the count';
+        if (!isset($this->count)) {
+            //todo throw exception and unit test this
         }
         $cacheKey = 'quotes_' . $this->count;
 

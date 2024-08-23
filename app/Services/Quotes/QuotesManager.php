@@ -27,6 +27,7 @@ class QuotesManager extends Manager implements QuotesApiDriver
     {
         $this->driver()->setCount($count);
     }
+
     public function clearCache(): KayneDriver
     {
         $this->driver()->clearCache();
