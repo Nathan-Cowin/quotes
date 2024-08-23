@@ -6,9 +6,12 @@ use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Traits\ApiResponses;
 
 class AuthenticateWithApiToken
 {
+    use ApiResponses;
+
     /**
      * Handle an incoming request.
      *
@@ -19,7 +22,7 @@ class AuthenticateWithApiToken
         $token = $request->header('Authorisation');
 
         if (!$token || !User::where('api_token', $token)->exists()) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return $this->errorResponse(['error' => 'Unauthorized'],'', Response::HTTP_UNAUTHORIZED);
         }
 
         return $next($request);
